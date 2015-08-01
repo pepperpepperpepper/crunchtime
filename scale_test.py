@@ -1,10 +1,10 @@
 #!/usr/bin/python2.7
-import simplejson as json
 import os, sys
 import random
 from abjad import *
-from lib import Scale, render_all
-from lib import scale_lib
+from lib import render_all
+from lib.note_constants import *
+from lib.Scale import Scale
 import time
 import os
 from subprocess import call
@@ -32,11 +32,6 @@ def add_to_score(pitches,score):
   score.append(staff);
   return score
   
-def make_abjad_segment(score):
-  persist(score).as_midi('test.midi'.format(int(time.time())));
-  persist(score).as_pdf('test.pdf'.format(int(time.time())));
-  call(['fluidsynth', '/home/pepper/pepsine.sf2', 'test.midi', '-F', 'test.wav' ])
-
 def main():
   score = Score([]);
   measures = 20;
@@ -44,23 +39,9 @@ def main():
   
   tempo = Tempo(Duration(1, 4), 240)
   attach(tempo, score)
-
-  C = 0
-  Cs = 1
-  D = 2
-  Eb = 3
-  E = 4
-  F = 5
-  Fs = 6
-  G = 7
-  Ab = 8
-  A = 9
-  Bb = 10
-  B = 11
   
-  
-  scale1 = Scale("minor_pentatonic", D);
-  scale2 = Scale("minor_pentatonic", G);
+  scale1 = Scale(D, name="minor_pentatonic");
+  scale2 = Scale(G, name="minor_pentatonic");
   part1 = []
   for i in xrange(0,beats):
     part1.append(choose_random_note_in_range(scale1.notes))
@@ -71,6 +52,6 @@ def main():
     part2.append(choose_random_note_in_range(scale2.notes))
   score = add_to_score(part2,score)
 
-  make_abjad_segment(score)
+  render_all(score, clean=True, play=True, preview=True)
 
 main()
