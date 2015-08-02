@@ -30,11 +30,16 @@ class PitchClassSet(object):
     role = 1;
     pitches = []
     for interval in self.intervals:
-      pitch += interval
+      pitch += interval.length
       if pitch >= self.lower_limit and pitch <= self.upper_limit:
         pitches.append({ "pitch_number" : pitch, "role" : role })
       role += 1
     self.notes += pitches;
+
+  def _interval_accum(self, intervals):
+    o_intervals = [0]
+    for i in xrange(0, len(intervals)):
+      o_intervals.append(o_intervals[i] + intervals[i])
 
   def __iter__(self):
     for note in self.notes:

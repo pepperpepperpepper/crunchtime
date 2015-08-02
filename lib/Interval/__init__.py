@@ -12,10 +12,10 @@ class Interval(object):
     elif "length" in kwargs:
       self.length = kwargs.get("length")
     else:
-      self.error("must define a length for the interval")
+      self.error("Must define a length for the interval")
   
   def _length_set_by_name(self, name):
-     print AliasInterval(name).value; sys.exit(0);
+     self.length = AliasInterval(name).value
 
   def __len__(self):
     return self.length
