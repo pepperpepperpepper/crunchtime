@@ -38,3 +38,4 @@ def render_all(score, clean=False, play=False, preview=False):
       call([AUDIO_PLAYER, file_audio]);
     except Exception as e:
       sys.stderr.write("WARNING: Couldn't call {}\n".format(AUDIO_PLAYER));
+  call(["reset"]);

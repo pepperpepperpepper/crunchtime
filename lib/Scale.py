@@ -23,13 +23,12 @@ class Scale(PitchClassSet):
           "try one of these...\n" + \
           "\n".join(map(lambda x: "\t\"{}\"".format(x), self._SCALE_INTERVALS.keys()));
         self.error(message)
-      super(Scale, self).__init__(
-        map(lambda a: Interval(length=a), self._SCALE_INTERVALS.get(kwargs.get("name"))),
-        root)
+      intervals = map(lambda a: Interval(length=a), self._SCALE_INTERVALS.get(kwargs.get("name"))) 
+      super(Scale, self).__init__(intervals, root)
     elif intervals in kwargs: 
       super(Scale, self).__init__(intervals, root)
     else:
-      self.error("no set of intervals or scale name provided");
+      self.error("No set of intervals or scale name provided");
 
   def intervals_find_by_name(self, s):
     """account for modes as well"""
