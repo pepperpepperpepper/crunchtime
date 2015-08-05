@@ -29,7 +29,9 @@ class Scale(PitchClassSet):
       super(Scale, self).__init__(intervals, root)
     else:
       self.error("No set of intervals or scale name provided");
+    self.notes = self.notes_all;
 
   def intervals_find_by_name(self, s):
     """account for modes as well"""
     pass
+  
