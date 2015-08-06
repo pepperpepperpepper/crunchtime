@@ -1,0 +1,35 @@
+what would an example be of using multiple inheritance in something like this...
+basically just want to know so that I can better imagine how to structure things..
+so multi-inh is basically weird way of doing roles for classes. one class may have several roles, and role 
+just do one thing best. for example it can track changes in object and update timestamp in itself. or can deal with
+object permissions. you write such role once, apply to object and it's automatically have all things working there.
+ok so in your example...
+
+
+what would go into Class1 and Class2? well a bit more concrete example
+
+
+class Monitor(Class1, Class2):
+  def __init__(self):
+    super(Class1)
+    super(Class2)
+
+
+
+class NoteSet()
+class Scale()
+class Stats()
+
+and in code 
+class MyNotes(NoteSet, Scale, Stats):
+ 
+noteset = MyNotes(mydata);
+noteset.scale(10)
+print noteset.stats()
+
+something like this so it's like a controller to wrap all of the other classes? yeah you can either create one huge class Noteset which will
+include all roles you have, or can let user decide which roles he want to include in his MyNotes class.
+I see ok cool
+you don't like multiple inheritance? you think I should avoid using it when possible? well it only solves few particular cases,
+so no need to use it everythere.  but way it'se is fine, roles are good, especially in something big, or in dbix class for example.
+right I like it

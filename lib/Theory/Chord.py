@@ -1,4 +1,4 @@
-from lib.Note.Set import NoteSet;
+from lib.NoteSet import NoteSet;
 from lib.Theory.Interval import Interval
 class Chord(NoteSet):
   def __init__(self, root, position="close", inversion="root", nearest=True, **kwargs):

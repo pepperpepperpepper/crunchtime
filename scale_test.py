@@ -6,8 +6,8 @@ from lib.Renderer import Renderer
 from lib.Note.Constants import *
 from lib.Theory.Scale import Scale
 import time
-import os
 from subprocess import call
+
 
 def choose_random_note_in_range(scale):
   upper_limit = 20;
@@ -51,6 +51,6 @@ def main():
   score = add_to_score(part2,score)
 
   renderer = Renderer(clean=True)
-  renderer.render_all(score, play=True, preview=True)
+  renderer.render_all(score, play=False, preview=False)
 
 main()

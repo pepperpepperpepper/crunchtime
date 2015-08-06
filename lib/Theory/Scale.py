@@ -1,6 +1,6 @@
-from lib.Note.Set import NoteSet;
+from lib.NoteSet import NoteSet;
 from lib.Theory.Interval import Interval
-class Scale(NoteSet):
+class Scale(NoteSet): 
   def __init__(self, root, **kwargs):
     """add modes next...needs a find by name function"""
     self._SCALE_INTERVALS = {
