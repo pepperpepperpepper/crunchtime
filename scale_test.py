@@ -2,7 +2,7 @@
 import os, sys
 import random
 import abjad
-from lib.Renderer import Renderer
+from lib.Renderer.Abjad import RendererAbjad
 from lib.Note.Constants import *
 from lib.Theory.Scale import Scale
 import time
@@ -50,7 +50,7 @@ def main():
     part2.append(choose_random_note_in_range(scale2.notes))
   score = add_to_score(part2,score)
 
-  renderer = Renderer(clean=True)
-  renderer.render_all(score, play=False, preview=False)
+  renderer = RendererAbjad(clean=True, verbose=True)
+  renderer.render(score, preview=False)
 
 main()

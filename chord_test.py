@@ -3,7 +3,7 @@ import os, sys
 from subprocess import call
 import random
 import abjad
-from lib.Renderer import Renderer
+from lib.Renderer.Abjad import RendererAbjad
 from lib.Note.Constants import *
 from lib.Theory.Chord import Chord
 
@@ -51,7 +51,7 @@ def main():
       part2.append(choose_random_note_in_range(chord1.notes_all))
   score = add_to_score(part2,score)
 
-  renderer = Renderer(clean=True)
-  renderer.render_all(score, play=True, preview=True)
+  renderer = RendererAbjad(clean=True, verbose=True)
+  renderer.render(score, preview=False)
 
 main()
