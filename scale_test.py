@@ -3,7 +3,7 @@ import os, sys
 import random
 from abjad import *
 from lib import render_all
-from lib.note_constants import *
+from lib.Note.Constants import *
 from lib.Scale import Scale
 import time
 import os
@@ -16,17 +16,15 @@ def choose_random_note_in_range(scale):
   note_number = None
   while not (note_number < upper_limit and note_number > lower_limit):
     choice = random.choice(scale)
-    note_number = choice["pitch_number"]
+    note_number = choice.number
   return choice 
 
-def pitches_to_quarter_notes(pitches):
-  notes = []
-  for pitch in pitches:
-    notes.append(Note(pitch['pitch_number'], Duration(1,4)))
-  return notes
+def notes_to_quarternotes(notes):
+  return map(lambda n: Note(n.number, Duration(1,4)), notes)
 
-def add_to_score(pitches,score):
-  notes = pitches_to_quarter_notes(pitches) 
+
+def add_to_score(notes,score):
+  notes = notes_to_quarternotes(notes) 
   container = Container(notes);
   staff = Staff([ container ])
   score.append(staff);

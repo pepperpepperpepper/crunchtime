@@ -3,8 +3,8 @@ import os, sys
 import random
 from abjad import *
 from lib import render_all
-from lib.note_constants import *
-from lib.Chord import Chord
+from lib.Note.Constants import *
+from lib.Chord import Chord as Chord
 import time
 import os
 from subprocess import call
@@ -14,17 +14,14 @@ def choose_random_note_in_range(notes, upper_limit=20, lower_limit=0):
   note_number = None
   while not (note_number < upper_limit and note_number > lower_limit):
     choice = random.choice(notes)
-    note_number = choice["pitch_number"]
+    note_number = choice.number
   return choice 
 
-def pitches_to_quarter_notes(pitches):
-  notes = []
-  for pitch in pitches:
-    notes.append(Note(pitch['pitch_number'], Duration(1,4)))
-  return notes
+def notes_to_quarternotes(notes):
+  return map(lambda n: Note(n.number, Duration(1,4)), notes)
 
-def add_to_score(pitches,score):
-  notes = pitches_to_quarter_notes(pitches) 
+def add_to_score(notes,score):
+  notes = notes_to_quarternotes(notes) 
   container = Container(notes);
   staff = Staff([ container ])
   score.append(staff);
@@ -35,7 +32,7 @@ def main():
   measures = 50;
   beats = 4 * measures
   
-  tempo = Tempo(Duration(1, 4), 360)
+  tempo = Tempo(Duration(1, 4), 240)
   attach(tempo, score)
   
   chord1 = Chord(C, name="major_major7");

@@ -1,7 +1,9 @@
 #import simplejson as json
 import os, time, sys
 from subprocess import call
-from abjad import *
+import abjad
+import signal
+import sys
 OUTPUT_DIR = "./rendered";
 PDF_VIEWER="okular"
 AUDIO_PLAYER="mplayer"
@@ -16,6 +18,10 @@ def filename_clean():
   for f in os.listdir(OUTPUT_DIR):
     os.unlink(os.path.join(OUTPUT_DIR, f));
 
+def signal_handler(signal, frame):
+        call(["reset", "-I"]);
+        sys.exit(0)
+
 def render_all(score, clean=False, play=False, preview=False):
   if clean:
     filename_clean() #for debugging
@@ -23,10 +29,11 @@ def render_all(score, clean=False, play=False, preview=False):
   file_audio = filename_new("wav");
   file_pdf = filename_new("pdf");
   sys.stderr.write("rendering {}\n".format(file_midi));
-  persist(score).as_midi(file_midi);
+  abjad.persist(score).as_midi(file_midi);
   sys.stderr.write("rendering {}\n".format(file_pdf));
-  persist(score).as_pdf(file_pdf);
+  abjad.persist(score).as_pdf(file_pdf);
   sys.stderr.write("rendering {} as {}...\n".format(file_midi, file_audio));
+  signal.signal(signal.SIGINT, signal_handler)
   call(['fluidsynth', '/home/pepper/pepsine.sf2', file_midi, '-F', file_audio ])
   if preview:
       try: 
@@ -38,4 +45,4 @@ def render_all(score, clean=False, play=False, preview=False):
       call([AUDIO_PLAYER, file_audio]);
     except Exception as e:
       sys.stderr.write("WARNING: Couldn't call {}\n".format(AUDIO_PLAYER));
-  call(["reset"]);
+  call(["reset", "-I"]);

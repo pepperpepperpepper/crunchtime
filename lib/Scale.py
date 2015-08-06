@@ -1,6 +1,6 @@
-from lib.PitchClassSet import PitchClassSet;
+from lib.Note.Set import NoteSet;
 from lib.Interval import Interval
-class Scale(PitchClassSet):
+class Scale(NoteSet):
   def __init__(self, root, **kwargs):
     """add modes next...needs a find by name function"""
     self._SCALE_INTERVALS = {

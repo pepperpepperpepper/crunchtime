@@ -1,6 +1,6 @@
-from lib.PitchClassSet import PitchClassSet;
+from lib.Note.Set import NoteSet;
 from lib.Interval import Interval
-class Chord(PitchClassSet):
+class Chord(NoteSet):
   def __init__(self, root, position="close", inversion="root", nearest=True, **kwargs):
     self._CHORD_INTERVALS = {
       "major" : [0, 4, 3],
@@ -39,7 +39,7 @@ class Chord(PitchClassSet):
     length = len(self._CHORD_INTERVALS)
     first_note = {}
     for note in self.notes_all:
-      if note["pitch_number"] == self.root:
+      if note.number == self.root:
         first_note = note
         break;
     root_idx = self.notes_all.index(first_note)

@@ -1,6 +1,6 @@
 import sys
-
-class PitchClassSet(object):
+from lib.Note import Note
+class NoteSet(object):
   def error(self, m):
     sys.stderr.write(m)
     sys.exit(1);
@@ -26,15 +26,15 @@ class PitchClassSet(object):
       error("Failed to build notes array");
 
   def _add_notes(self, root):
-    pitch = root;
+    number = root;
     role = 1;
-    pitches = []
+    notes = []
     for interval in self.intervals:
-      pitch += interval.length
-      if pitch >= self.lower_limit and pitch <= self.upper_limit:
-        pitches.append({ "pitch_number" : pitch, "role" : role })
+      number += interval.length
+      if number >= self.lower_limit and number <= self.upper_limit:
+        notes.append(Note(number=number, role=role ))
       role += 1
-    self.notes_all += pitches;
+    self.notes_all += notes;
 
   def _interval_accum(self, intervals):
     o_intervals = [0]
