@@ -1,10 +1,10 @@
 #!/usr/bin/python2.7
 import os, sys
 import random
-from abjad import *
-from lib import render_all
+import abjad
+from lib.Renderer import Renderer
 from lib.Note.Constants import *
-from lib.Scale import Scale
+from lib.Theory.Scale import Scale
 import time
 import os
 from subprocess import call
@@ -20,23 +20,23 @@ def choose_random_note_in_range(scale):
   return choice 
 
 def notes_to_quarternotes(notes):
-  return map(lambda n: Note(n.number, Duration(1,4)), notes)
+  return map(lambda n: abjad.Note(n.number, abjad.Duration(1,4)), notes)
 
 
 def add_to_score(notes,score):
   notes = notes_to_quarternotes(notes) 
-  container = Container(notes);
-  staff = Staff([ container ])
+  container = abjad.Container(notes);
+  staff = abjad.Staff([ container ])
   score.append(staff);
   return score
   
 def main():
-  score = Score([]);
+  score = abjad.Score([]);
   measures = 20;
   beats = 4 * measures
   
-  tempo = Tempo(Duration(1, 4), 240)
-  attach(tempo, score)
+  tempo = abjad.Tempo(abjad.Duration(1, 4), 240)
+  abjad.attach(tempo, score)
   
   scale1 = Scale(D, name="minor_pentatonic");
   scale2 = Scale(G, name="minor_pentatonic");
@@ -50,6 +50,7 @@ def main():
     part2.append(choose_random_note_in_range(scale2.notes))
   score = add_to_score(part2,score)
 
-  render_all(score, clean=True, play=True, preview=True)
+  renderer = Renderer(clean=True)
+  renderer.render_all(score, play=True, preview=True)
 
 main()

@@ -1,13 +1,11 @@
 #!/usr/bin/python2.7
 import os, sys
-import random
-from abjad import *
-from lib import render_all
-from lib.Note.Constants import *
-from lib.Chord import Chord as Chord
-import time
-import os
 from subprocess import call
+import random
+import abjad
+from lib.Renderer import Renderer
+from lib.Note.Constants import *
+from lib.Theory.Chord import Chord
 
 def choose_random_note_in_range(notes, upper_limit=20, lower_limit=0):
   choice = None
@@ -18,22 +16,22 @@ def choose_random_note_in_range(notes, upper_limit=20, lower_limit=0):
   return choice 
 
 def notes_to_quarternotes(notes):
-  return map(lambda n: Note(n.number, Duration(1,4)), notes)
+  return map(lambda n: abjad.Note(n.number, abjad.Duration(1,4)), notes)
 
 def add_to_score(notes,score):
   notes = notes_to_quarternotes(notes) 
-  container = Container(notes);
-  staff = Staff([ container ])
+  container = abjad.Container(notes);
+  staff = abjad.Staff([ container ])
   score.append(staff);
   return score
   
 def main():
-  score = Score([]);
+  score = abjad.Score([]);
   measures = 50;
   beats = 4 * measures
   
-  tempo = Tempo(Duration(1, 4), 240)
-  attach(tempo, score)
+  tempo = abjad.Tempo(abjad.Duration(1, 4), 240)
+  abjad.attach(tempo, score)
   
   chord1 = Chord(C, name="major_major7");
   chord2 = Chord(G, name="major_minor7");
@@ -53,6 +51,7 @@ def main():
       part2.append(choose_random_note_in_range(chord1.notes_all))
   score = add_to_score(part2,score)
 
-  render_all(score, clean=True, play=True, preview=True)
+  renderer = Renderer(clean=True)
+  renderer.render_all(score, play=True, preview=True)
 
 main()

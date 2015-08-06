@@ -1,3 +1,4 @@
+from lib.Note.Duration import NoteDuration
 class Note(object):
   def __init__(self, number=None, role=None):
     self.number = number
