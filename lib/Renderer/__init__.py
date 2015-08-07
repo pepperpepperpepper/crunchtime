@@ -51,6 +51,6 @@ class Renderer(object):
         self.log("Removing {}...".format(f), color=self._logger.BLUE, header_color=self._logger.BLUE)
       os.unlink(os.path.join(self.output_directory, f));
 
-  def _reset_term(self):
+  def _reset_term(self, dummy_a, dummy_b):
         call(["reset", "-I"]);
 

@@ -36,12 +36,12 @@ class Logger(object):
       sys.exit(1);
     header = "{}-log:\t".format(self._role)
     if self._log_output == "stderr":
-      m = "{}{}{}\t{}{}\n".format(header_color, header, time_str, color, str(m))
+      m = "{}{}{}\t{}{}{}\n".format(header_color, header, time_str, self.RESET, color, str(m))
       sys.stderr.write(m)
       sys.stderr.write(self.RESET);
       
     elif self._log_output == "stdout":
-      m = "{}{}{}\t{}{}\n".format(header_color, header, time_str, color, str(m))
+      m = "{}{}{}\t{}{}{}\n".format(header_color, header, time_str, self.RESET, color, str(m))
       sys.stdout.write(m)
       sys.stdout.write(self.RESET)
     else: 

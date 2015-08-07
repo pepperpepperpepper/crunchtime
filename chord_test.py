@@ -52,6 +52,6 @@ def main():
   score = add_to_score(part2,score)
 
   renderer = RendererAbjad(clean=True, verbose=True)
-  renderer.render(score, preview=False)
+  renderer.render(score, preview=True)
 
 main()
