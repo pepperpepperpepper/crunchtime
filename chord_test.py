@@ -6,7 +6,7 @@ import abjad
 from lib.Renderer.Abjad import RendererAbjad
 from lib.Note.Constants import *
 from lib.Theory.Chord import Chord
-from lib.Renderer.Audio.Player import RendererAudioPlayer
+from lib.Audio.Player import AudioPlayer
 from lib.Renderer.Audio.Fluidsynth import RendererAudioFluidsynth
 
 def choose_random_note_in_range(notes, upper_limit=20, lower_limit=0):
@@ -57,7 +57,7 @@ def main():
   abjad_renderer.render(score, preview=False)
   audio_renderer = RendererAudioFluidsynth();  
   file_audio = audio_renderer.render(abjad_renderer.file_midi)
-  audio_player = RendererAudioPlayer();
+  audio_player = AudioPlayer();
   audio_player.play(file_audio)
 
 main()

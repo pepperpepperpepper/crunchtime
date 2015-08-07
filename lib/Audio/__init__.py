@@ -1,5 +1,7 @@
 from lib.Logger import Logger
+from subprocess import call
 import time
+
 class Audio(object):
   def __init__(self, 
       verbose=False, 

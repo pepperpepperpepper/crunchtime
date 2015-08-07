@@ -1,0 +1,14 @@
+BINARIES_NEEDED:
+mplayer
+sox
+fluidsynth
+amsynth
+okular
+lilypond
+
+
+python2.7_libs:
+abjad
+colorama
+
+
