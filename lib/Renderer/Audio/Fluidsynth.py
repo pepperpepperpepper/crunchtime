@@ -6,8 +6,7 @@ SOUNDFONTS={
   "sinewav" : "./assets/soundfonts/pepsine.sf2",
 }
 
-
-class RendererAudioFluidsynth(Renderer):
+class RendererAudioFluidsynth(RendererAudio):
   def __init__(self, **kwargs):
     """TODO: create a property for self.file_audio that when accessed as a NoneType 
       an attribute error is raised, saying that the file_audio has yet to be rendered!
@@ -19,12 +18,12 @@ class RendererAudioFluidsynth(Renderer):
       soundfont = self.SOUNDFONTS.get("sinewav");
     self.file_audio = self.filename_new(format_type, filename=filename)
     if self._verbose:
-      self.log("rendering {} with {}".format(self.file_audio, soundfont), color=self._logger.MAGENTA, header_color=self._logger.MAGENTA);
+      self.log_info("rendering {} with {}".format(self.file_audio, soundfont));
     try: 
       call(['fluidsynth', soundfont, midifile, '-F', self.file_audio ])
     except Exception as e:
-      self.log("WARNING: Unable to process {} with fluidsynth".format(midifile), color=self._logger.RED_WHITE, header_color=self._logger.YELLOW)
-      self.log(str(e), color=self._logger.RED_WHITE, header_color=self._logger.YELLOW)
+      self.log_warn("WARNING: Unable to process {} with fluidsynth".format(midifile))
+      self.log_warn(str(e))
     return self.file_audio
       
   def render_sine(self, midifile, play=False, format_type="wav"):

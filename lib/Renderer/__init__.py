@@ -35,21 +35,33 @@ class Renderer(object):
     if clean:
       self.filename_clean() #for debugging
     
-   
+  
   def log(self, m, header_color="", color=""):
     self._logger.log(m, header_color=header_color, color=color, time_str=self._time_str)
+
+  def log_warn(self, m):
+    m = "WARNING:{}".format(m)
+    self.log(m, header_color=self._logger.RED_WHITE, color=self._logger.YELLOW) 
+  
+  def log_err(self, m):
+    m = "ERROR:{}".format(m)
+    self.log(m, header_color=self._logger.RED_WHITE, color=self._logger.RED) 
+
+  def log_info(self, m);
+    self.log(m, header_color=self._logger.GREEN, color=self._logger.GREEN);
+
 
   def filename_new(self, ext, filename=None):
     if not filename:
       filename = self._time_str
     return "{}.{}".format(os.path.join(self.output_directory, filename), ext);
 
-
   def filename_clean(self):
     for f in os.listdir(self.output_directory):
       if self._verbose:
         self.log("Removing {}...".format(f), color=self._logger.BLUE, header_color=self._logger.BLUE)
       os.unlink(os.path.join(self.output_directory, f));
+
 
   def _reset_term(self, dummy_a, dummy_b):
         call(["reset", "-I"]);
