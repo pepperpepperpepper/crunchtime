@@ -5,6 +5,8 @@ import abjad
 from lib.Renderer.Abjad import RendererAbjad
 from lib.Note.Constants import *
 from lib.Theory.Scale import Scale
+from lib.Renderer.Audio.Player import RendererAudioPlayer
+from lib.Renderer.Audio.Fluidsynth import RendererAudioFluidsynth
 import time
 from subprocess import call
 
@@ -50,7 +52,11 @@ def main():
     part2.append(choose_random_note_in_range(scale2.notes))
   score = add_to_score(part2,score)
 
-  renderer = RendererAbjad(clean=True, verbose=True)
-  renderer.render(score, preview=False)
+  abjad_renderer = RendererAbjad(clean=True, verbose=True)
+  abjad_renderer.render(score, preview=False)
+  audio_renderer = RendererAudioFluidsynth();  
+  file_audio = audio_renderer.render(abjad_renderer.file_midi)
+  audio_player = RendererAudioPlayer();
+  audio_player.play(file_audio)
 
 main()
