@@ -47,7 +47,7 @@ class Renderer(object):
     m = "ERROR:{}".format(m)
     self.log(m, header_color=self._logger.RED_WHITE, color=self._logger.RED) 
 
-  def log_info(self, m);
+  def log_info(self, m):
     self.log(m, header_color=self._logger.GREEN, color=self._logger.GREEN);
 
 

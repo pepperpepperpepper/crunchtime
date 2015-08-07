@@ -1,6 +1,6 @@
 import sys 
 from subprocess import call
-from lib.Renderer import Renderer
+from lib.Renderer.Audio import RendererAudio
 
 SOUNDFONTS={
   "sinewav" : "./assets/soundfonts/pepsine.sf2",

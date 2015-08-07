@@ -1,3 +1,4 @@
+from lib.Audio import Audio
 import sys 
 from subprocess import call
 import signal
@@ -6,7 +7,7 @@ DEFAULT_AUDIO_PLAYER="mplayer"
 class AudioPlayer(Audio):
   def __init__(self, audio_player=DEFAULT_AUDIO_PLAYER, **kwargs):
     self.audio_player = audio_player
-    super(RendererAudioPlayer, self).__init__(**kwargs) 
+    super(AudioPlayer, self).__init__(**kwargs) 
   
   def play(self, file_audio):
     signal.signal(signal.SIGINT, self._reset_term)

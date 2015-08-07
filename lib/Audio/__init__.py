@@ -1,7 +1,7 @@
 from lib.Logger import Logger
 import time
 class Audio(object):
-  def __init__(self, **kwargs):
+  def __init__(self, 
       verbose=False, 
       log_output="stderr",
       **kwargs):
@@ -16,4 +16,3 @@ class Audio(object):
   def _reset_term(self, dummy_a, dummy_b):
         call(["reset", "-I"]);
 
-    pass
