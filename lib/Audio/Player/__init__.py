@@ -1,10 +1,9 @@
 import sys 
 from subprocess import call
-from lib.Renderer import Renderer
 import signal
 DEFAULT_AUDIO_PLAYER="mplayer"
 
-class RendererAudioPlayer(Renderer):
+class AudioPlayer(Audio):
   def __init__(self, audio_player=DEFAULT_AUDIO_PLAYER, **kwargs):
     self.audio_player = audio_player
     super(RendererAudioPlayer, self).__init__(**kwargs) 
