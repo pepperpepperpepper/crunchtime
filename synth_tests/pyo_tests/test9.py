@@ -1,9 +1,8 @@
 
-
 #!/usr/bin/python2.7
 from pyo import *
 s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1,  audio='offline').boot()
-s.recordOptions(dur=30.0, fileformat=0, filename='../rendered/test_pyo.wav', sampletype=0)
+s.recordOptions(dur=30.0, fileformat=0, filename='../../rendered/test_pyo.wav', sampletype=0)
 
 #ph = Phasor(freq=[7,8])
 #tr = Between(ph, min=0, max=.25)
@@ -13,9 +12,7 @@ s.recordOptions(dur=30.0, fileformat=0, filename='../rendered/test_pyo.wav', sam
 
 
 met = Metro(.125, poly=2).play()
-rnd = TrigRand(met, min=0, max=1, port=.005)
-omlf = Sine(.5, mul=700, add=1000)
-fr = Scale(rnd, inmin=0, inmax=1, outmin=250, outmax=omlf, exp=1)
-amp = TrigEnv(met, table=HannTable(), dur=.25, mul=.2)
-out = SineLoop(fr, feedback=.07, mul=amp).out()
+mid = TrigChoice(met, choice=[60, 63, 67, 70], port=.005)
+hz = MToF(mid)
+syn = SineLoop(freq=hz, feedback=.07, mul=.2).out()
 s.start()

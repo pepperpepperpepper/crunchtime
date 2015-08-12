@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7
 from pyo import *
 s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1,  audio='offline').boot()
-s.recordOptions(dur=30.0, fileformat=0, filename='../rendered/test_pyo.wav', sampletype=0)
+s.recordOptions(dur=30.0, fileformat=0, filename='../../rendered/test_pyo.wav', sampletype=0)
 fr = Sig(value=400)
 p = Port(fr, risetime=0.001, falltime=0.001)
 a = SineLoop(freq=p, feedback=0.08, mul=.3).out()
