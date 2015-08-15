@@ -2,6 +2,8 @@
 from lib.Renderer.Audio import RendererAudio
 import wave, struct, math
 import scipy.signal
+import sys
+from lib.Tuning.Midi import TuningMidi
 #http://blog.acipo.com/wave-generation-in-python/
 
 class RendererAudioSimpleSynth(RendererAudio):
@@ -17,15 +19,22 @@ class RendererAudioSimpleSynth(RendererAudio):
     self._wavefile_h.setsampwidth(self.sample_width);
     self._wavefile_h.setframerate(self.sample_rate)
 
-  def sound_write(self, freq=[440.0,550.0], duration=1.0, volume=.1, rest=0):
+  def sound_write(self, freq=[440.0,550.0], duration=1.0, volume=.4, rest=0, midi_tick=0):
     """duration is in seconds"""
+    if not freq:
+      return
     if type(freq) in [  int , float ]:
       freq = [ float(freq) ];
     freq = map(lambda f: f * 2.0, freq);
     if rest:
       freq = [0];
     amp_width = math.pow(math.pow(2.0, 8.0), self.sample_width)/2.0 - 1.0 ;
-    for i in range(int(duration * self.sample_rate)):
+    samples_count = duration * self.sample_rate
+    #this calculation allows for the synth to not oscillate 
+    #when writing short sample frames
+    if midi_tick:
+      midi_tick *= samples_count;
+    for i in range(int(midi_tick), int(midi_tick+samples_count)):
         value = 0.;
         for f in freq:
           if self.wavetype == "sawtooth":
@@ -35,13 +44,45 @@ class RendererAudioSimpleSynth(RendererAudio):
           elif self.wavetype == "triangle":
             value += float(amp_width)*scipy.signal.triang(f*math.pi*float(i)/float(self.sample_rate))
           else:
-            value += float(amp_width)*math.sin(f*math.pi*float(i)/float(self.sample_rate))
+            value += float(amp_width)*math.cos(f*math.pi*float(i)/float(self.sample_rate))
   
         value *= volume/len(freq)
         data = struct.pack('<h', int(value))
         self._wavefile_h.writeframesraw( data )
 
-  
+  def midi_stream_process(self, stream, division=384, tempo=25000):
+     self._current_tick = 0;
+     self._current_notes = []
+     tuning = TuningMidi();
+     
+     
+     tick_duration = float((1.0/float(division) * float(tempo))/100000.0)
+     try: 
+       while True:
+         events = stream.next();
+         self._current_tick += 1;
+         for event in events:
+           if event.get("type") == "Note_on_c":
+             if int(event.get("vel")): 
+               self._current_notes.append(int(event.get("note")))
+               print self._current_notes
+             else:
+               try:
+                 self._current_notes.remove(int(event.get("note")))
+               except Exception as e:
+                 sys.stderr.write(str(e))
+           elif event.get("type") == "Note_off_c":
+             self._current_notes.remove(int(event.get("note")))
+         self.sound_write(
+           freq=map(lambda n: tuning.midi_note_to_frequency(n), self._current_notes),
+           duration=tick_duration,
+           midi_tick=self._current_tick
+         )
+     except StopIteration:
+       pass 
+     finally:
+       del stream; 
+       self.log_info("Wrote to {}".format(self.filename))
 
 
   def close(self):
