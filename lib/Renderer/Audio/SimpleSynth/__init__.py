@@ -18,6 +18,7 @@ class RendererAudioSimpleSynth(RendererAudio):
     self._wavefile_h.setframerate(self.sample_rate)
 
   def sound_write(self, freq=[440.0,550.0], duration=1.0, volume=.1, rest=0):
+    """duration is in seconds"""
     if type(freq) in [  int , float ]:
       freq = [ float(freq) ];
     freq = map(lambda f: f * 2.0, freq);
@@ -39,6 +40,10 @@ class RendererAudioSimpleSynth(RendererAudio):
         value *= volume/len(freq)
         data = struct.pack('<h', int(value))
         self._wavefile_h.writeframesraw( data )
+
+  
+
+
   def close(self):
     self._wavefile_h('')
     self._wavefile_h.close()

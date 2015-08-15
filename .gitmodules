@@ -1,0 +1,6 @@
+[submodule "vendor/python-midi"]
+	path = vendor/python-midi
+	url = https://github.com/vishnubob/python-midi.git
+[submodule "vendor/midi-json"]
+	path = vendor/midi-json
+	url = https://github.com/pepperpepperpepper/midi-json.git
