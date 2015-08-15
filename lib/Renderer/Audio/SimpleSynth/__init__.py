@@ -50,10 +50,10 @@ class RendererAudioSimpleSynth(RendererAudio):
         data = struct.pack('<h', int(value))
         self._wavefile_h.writeframesraw( data )
 
-  def midi_stream_process(self, stream, division=384, tempo=25000):
+  def midi_stream_process(self, stream, division=384, tempo=25000, tuning=TuningMidi(tuning="equal_temperament")):
      self._current_tick = 0;
      self._current_notes = []
-     tuning = TuningMidi();
+      
      
      
      tick_duration = float((1.0/float(division) * float(tempo))/100000.0)
