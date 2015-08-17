@@ -35,4 +35,4 @@ class TuningMidi(Tuning):
         freq_val /= relative_octave
       if distance < 0:
         freq_val /= 2.0;
-      return freq_val;
+      return math.fabs(freq_val);

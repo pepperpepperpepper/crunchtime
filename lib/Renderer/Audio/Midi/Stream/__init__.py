@@ -29,7 +29,7 @@ class RendererAudioMidiStream(object):
 
   def _tempo_set(self, event=None, tempo=None):
     if event:
-      self.tempo = event.get("number");
+      self.tempo = event.get("Number");
     else:
       self.tempo = tempo
     if not self.tempo:
@@ -65,7 +65,7 @@ class RendererAudioMidiStream(object):
         else:
           self.tracks[track_no] = [event]
     self.channels = map(lambda x: self.tracks[x], sorted(self.tracks.keys())[3:])
-    self.channels = map(lambda x: { "current_event" : {} , "events": itertools.chain(x) }, self.channels)
+    self.channels = map(lambda x: { "current_event" : {} , "events": itertools.chain(x) }, [ self.channels[0] ])
 
   def make_event_stream(self):
      total_events = []

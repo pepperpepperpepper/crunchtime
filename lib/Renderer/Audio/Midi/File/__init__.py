@@ -19,40 +19,71 @@ class RendererAudioMidiFile(object):
       "abs_time" : parts[1],
       "type": parts[2]
     }
-    if data.get("type") == "Tempo":
-      data["number"] = parts[3]
-    elif data.get("type") == "Header":
+    if data.get("type") == "Header":
       data["format"] = parts[3]
       data["nTracks"] = parts[4]
       data["division"] = parts[5]
-    elif data.get("type") == "Note_on_c":
-      data["channel"] = parts[3]
-      data["note"] = parts[4]
-      data["vel"] = parts[5]
-    elif data.get("type") == "Note_off_c":
-      data["channel"] = parts[3]
-      data["note"] = parts[4]
+    elif data.get("type") in [ "End_of_file", "Start_track" , "End_track" ]:
+      pass
+    elif data.get("type") in [ 
+        "Title_t", "Copyright_t", "Instrument_name_t", 
+        "Marker_t", "Cue_point_t", "Lyric_t", "Text_t" 
+      ]:
+      data["Text"] = parts[3]
+    elif data.get("type") in [ "Sequence_number", "MIDI_port", "Channel_prefix" ]:
+      data["Number"] = parts[3]
     elif data.get("type") == "Time_signature":
-      data["numerator"] = parts[3]
-      data["denominator"] = parts[4]
-      data["click"] = parts[5]
-      data["notesQ"] = parts[6]
-    elif data.get("type") in ["Text_t", "Title_t"]:
-      data["value"] = parts[3]
+      data["Num"] = parts[3]
+      data["Denom"] = parts[4]
+      data["Click"] = parts[5]
+      data["NotesQ"] = parts[6]
+    elif data.get("type") == "Key_signature" :
+      data["Key"] = parts[3]
+      data["Major/Minor"] = parts[4]
+    elif data.get("type") == "Tempo":
+      data["Number"] = parts[3]
+    elif data.get("type") == "SMPTE_offset":
+      data["Hour"] = parts[3]
+      data["Minute"] = parts[4]
+      data["Second"] = parts[5]
+      data["Frame"] = parts[6]
+      data["FracFrame"] = parts[7]
+    elif data.get("type") == "Sequencer_specific":
+      data["Length"] = parts[3]
+      data["Data"] = parts[4:]
+    elif data.get("type") == "Unknown_meta_event":
+      data["Type"] = parts[3]
+      data["Length"] = parts[4]
+      data["Data"] = parts[5:]
+
+    elif data.get("type") == "Note_on_c":
+      data["Channel"] = parts[3]
+      data["Note"] = parts[4]
+      data["Velocity"] = parts[5]
+    elif data.get("type") == "Note_off_c":
+      data["Channel"] = parts[3]
+      data["Note"] = parts[4]
+      data["Velocity"] = parts[4]
     elif data.get("type") == "Control_c":
-      data["channel"] = parts[3]
-      data["control_num"] = parts[4]
-      data["value"] = parts[5]
+      data["Channel"] = parts[3]
+      data["Control_Num"] = parts[4]
+      data["Value"] = parts[5]
     elif data.get("type") in [ "Channel_aftertouch_c", "Pitch_bend_c" ] :
-      data["channel"] = parts[3]
-      data["value"] = parts[4]
-    elif data.get("type") == "Program_c":
-      data["channel"] = parts[3]
-      data["program_num"] = parts[4]
-    elif data.get("type") == "Poly_aftertouch_c":
-      data["channel"] = parts[3]
-      data["note"] = parts[4]
-      data["value"] = parts[5]
+      data["Channel"] = parts[3]
+      data["Value"] = parts[4]
+    elif data.get("type") == "Program_c" : 
+      data["Channel"] = parts[3]
+      data["Program_num"] = parts[4]
+    elif data.get("type") == "Poly_aftertouch_c" : 
+      data["Channel"] = parts[3]
+      data["Note"] = parts[4]
+      data["Value"] = parts[5]
+
+    elif data.get("type") in [ "System_exclusive" ] :
+      data["Length"] = parts[3]
+      data["Data"] = parts[4:]
 
     return data
-    
+
+  def recompile(self, events):
+    pass

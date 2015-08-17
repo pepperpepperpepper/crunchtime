@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7
 from pyo import *
-s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1,  audio='offline').boot()
-s.recordOptions(dur=30.0, fileformat=0, filename='../../rendered/test_pyo.wav', sampletype=0)
+s = Server(sr=44100, nchnls=2, buffersize=512, duplex=1,  audio='offline_nb').boot()
+s.recordOptions(dur=30.0, fileformat=0, filename='test_pyo.wav', sampletype=0)
 
 
 
