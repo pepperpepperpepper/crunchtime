@@ -6,12 +6,14 @@ from lib.Logger import Logger
 OUTPUT_DIR = "./rendered";
 PDF_VIEWER="okular"
 AUDIO_PLAYER="mplayer"
+TMP_DIRECTORY="/tmp"
 
 class Renderer(object):
   def __init__(self, 
       audio_player=AUDIO_PLAYER, 
       pdf_viewer=PDF_VIEWER, 
       output_directory=OUTPUT_DIR, 
+      tmp_directory=TMP_DIRECTORY,
       clean=False,
       verbose=False, 
       log_output="stderr",
@@ -25,6 +27,7 @@ class Renderer(object):
     self.audio_player = audio_player
     self.pdf_viewer = pdf_viewer
     self.output_directory = output_directory
+    self.tmp_directory = TMP_DIRECTORY
     if not os.path.isdir(self.output_directory):
       try:
         os.mkdir(self.output_directory)
@@ -55,6 +58,11 @@ class Renderer(object):
     if not filename:
       filename = self._time_str
     return "{}.{}".format(os.path.join(self.output_directory, filename), ext);
+
+  def filename_temporary_new(self, ext, filename=None):
+    if not filename:
+      filename = self._time_str
+    return "{}.{}".format(os.path.join(self.tmp_directory, filename), ext);
 
   def filename_clean(self):
     for f in os.listdir(self.output_directory):

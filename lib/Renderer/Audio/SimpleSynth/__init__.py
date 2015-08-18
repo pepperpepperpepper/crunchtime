@@ -63,7 +63,7 @@ class RendererAudioSimpleSynth(RendererAudio):
          self._current_tick += 1;
          
          for event in events:
-           if event.get("type") == "Note_on_c":
+           if event.get("Type") == "Note_on_c":
              if int(event.get("Velocity")): 
                self._current_notes.append(int(event.get("Note")))
                print map(lambda n: tuning.midi_note_to_frequency(n), self._current_notes)
@@ -72,7 +72,7 @@ class RendererAudioSimpleSynth(RendererAudio):
                  self._current_notes.remove(int(event.get("Note")))
                except Exception as e:
                  sys.stderr.write(str(e))
-           elif event.get("type") == "Note_off_c":
+           elif event.get("Type") == "Note_off_c":
              print "in note off"
              self._current_notes.remove(int(event.get("Note")))
          self.sound_write(

@@ -10,5 +10,7 @@ lilypond
 python2.7_libs:
 abjad
 colorama
-
+distutils
+mido
+pyo
 
