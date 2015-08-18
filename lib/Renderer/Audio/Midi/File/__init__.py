@@ -14,12 +14,14 @@ class RendererAudioMidiFile(RendererAudioMidi):
         sys.exit(1)
     self._midicsv_path = midicsv_path 
     self._csvmidi_path = csvmidi_path
-    self.filename = filename or self.filename_new();
+    self._filename = filename or self.filename_new("midi");
     self.events = []
 
   def filename_set(self, filename):
-    #FIXME make this take into account the extension
     self._filename = filename
+  
+  def filename_get(self):
+    return self._filename
 
   def _csvmidi_cmd(self, inputfile=None, outputfile=None):
     if not inputfile or not outputfile:
@@ -45,7 +47,7 @@ class RendererAudioMidiFile(RendererAudioMidi):
   
   def load_events(self, from_file=None, from_events=None):
     if from_events:
-      self.events = events
+      self.events = from_events
     elif from_file:
       if not os.path.exists(from_file):
         self.log_err("Could not find filename {}".format(from_file));
@@ -59,8 +61,8 @@ class RendererAudioMidiFile(RendererAudioMidi):
   def midifile_out(self, filename=None):      
     return self._csv_recompile(filename=filename);
 
-  def _csv_decompile(self, filename):
-    s = self._midicsv_cmd(inputfile=filename);
+  def _csv_decompile(self, midi_filename):
+    s = self._midicsv_cmd(inputfile=midi_filename);
     lines = s.split("\n");
     lines = map(lambda x: self._csv_line_to_obj(x), lines) 
     lines = filter(lambda x: x, lines)
@@ -245,7 +247,7 @@ class RendererAudioMidiFile(RendererAudioMidi):
           event.get("Length"),
           event.get("Data"),
         ]
-      _output_array.append(", ".join(event_list));
+      _output_array.append(", ".join(map(lambda n: str(n), event_list)));
     #}}}
     _output_str = "\n".join(_output_array); 
     _output_csv = self.filename_temporary_new("csv");
@@ -259,19 +261,33 @@ class RendererAudioMidiFile(RendererAudioMidi):
       sys.exit(1)
     if self._verbose:
       self.log_info("Made temporary csv file {}".format(_output_csv))
-    file_midi_output = filename or self.filename_new("midi");
-    self._csvmidi_cmd(inputfile=_output_csv, outputfile=file_midi_output)
-    return file_midi_output;
+    self._csvmidi_cmd(inputfile=_output_csv, outputfile=self._filename)
+    if self._verbose:
+      self.log_info("Removing {}".format(_output_csv))
+    try:
+      os.unlink(_output_csv)
+    except Exception as e:
+      self.log_warn("Unable to remove {}".format(_output_csv))
+      if self._verbose: self.log_warn(str(e))
+    return self._filename;
 
   def remove_track(self, track_number):
+    new_events = []
     for idx in range(len(self.events)):
       _track_no = self.events[idx].get("Track")
-      if _track_no == track_number
-        del self.events[idx] 
+      if self.events[idx].get("Type") == "Header":
+        event = self.events[idx]
+        event["nTracks"] -= 1
+        new_events.append(event)
+      elif _track_no == track_number:
+        continue;
       elif _track_no > track_number:
-        self.events[idx]["Track"] = _track_no - 1  
+        event = self.events[idx]
+        event["Track"] = _track_no - 1 
+        new_events.append(event)
       else:
-        pass
+        new_events.append(self.events[idx])
+    self.load_events(from_events=new_events)
 
   def _find_channels(self):
     _channels = []
@@ -283,3 +299,4 @@ class RendererAudioMidiFile(RendererAudioMidi):
         }
         if channel not in _channels:
           _channels.append(channel)
+    return _channels
