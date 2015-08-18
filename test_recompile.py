@@ -1,9 +1,9 @@
 #!/usr/bin/python2 
-from lib.Renderer.Audio.Midi.File import RendererAudioMidiFile;
-from lib.Renderer.Audio.Midi.FileCollection import RendererAudioMidiFileCollection
-midifile = RendererAudioMidiFile();
+from lib.Renderer.Midi.File import RendererMidiFile;
+from lib.Renderer.Midi.FileCollection import RendererMidiFileCollection
+midifile = RendererMidiFile();
 midifile.load_events(from_file="./rendered/1439631385.midi")
-midifile_collection = RendererAudioMidiFileCollection();
+midifile_collection = RendererMidiFileCollection();
 midifile_collection.split_by_channel(midifile);
 
 
