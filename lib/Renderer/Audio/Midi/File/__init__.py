@@ -1,37 +1,81 @@
 from lib.Renderer.Audio.Midi import RendererAudioMidi
 MIDICSV_PATH="midicsv"
 CSVMIDI_PATH="csvmidi"
-import subprocess, sys
+import subprocess, sys, os
+import re
 from distutils.spawn import find_executable
 
 class RendererAudioMidiFile(RendererAudioMidi):
-  def __init__(self, filename, midicsv_path=MIDICSV_PATH, csvmidi_path=CSVMIDI_PATH):
+  def __init__(self, filename=None, midicsv_path=MIDICSV_PATH, csvmidi_path=CSVMIDI_PATH, **kwargs):
     super(RendererAudioMidiFile, self).__init__(**kwargs) 
-    self.filename_original = filename
-    if not os.path.exits(self.filename_original):
-      self.log_error("Could not find filename {}".format(self.filename_original);
-      sys.exit(1);
-    
     for filepath in [ midicsv_path, csvmidi_path ]:
       if not os.path.exists(filepath) and not find_executable(filepath):
-        self.log_error("Could not find path {}".format(filepath));
+        self.log_err("Could not find path {}".format(filepath));
         sys.exit(1)
     self._midicsv_path = midicsv_path 
     self._csvmidi_path = csvmidi_path
+    self.filename = filename or self.filename_new();
     self.events = []
-    self._csv_decompile();
 
-  def _csv_decompile(self):
-    s = subprocess.Popen((self._midicsv_path, self.filename_original), stdout=subprocess.PIPE).communicate()[0]
+  def filename_set(self, filename):
+    #FIXME make this take into account the extension
+    self._filename = filename
+
+  def _csvmidi_cmd(self, inputfile=None, outputfile=None):
+    if not inputfile or not outputfile:
+      self.log_err("Bad csvmidi command. Must supply both inputfile and outputfile");
+      sys.exit(1)
+    try:
+      subprocess.call([ self._csvmidi_path, inputfile, outputfile ]);
+    except Exception as e:
+      self.log_err(str(e))
+      self.log_err("Could not call csvmidi");
+      sys.exit(1);
+
+  def _midicsv_cmd(self, inputfile=None):
+    if not inputfile:
+      self.log_err("Bad midicsv command. Must supply inputfile");
+      sys.exit(1)
+    try:
+      return subprocess.Popen((self._midicsv_path, inputfile), stdout=subprocess.PIPE).communicate()[0]
+    except Exception as e:
+      self.log_err(str(e))
+      self.log_err("Could not call midicsv");
+      sys.exit(1);
+  
+  def load_events(self, from_file=None, from_events=None):
+    if from_events:
+      self.events = events
+    elif from_file:
+      if not os.path.exists(from_file):
+        self.log_err("Could not find filename {}".format(from_file));
+        sys.exit(1);
+      self._csv_decompile(from_file);
+    else:
+      self.log_warn("must specify filename or events array");
+      self.log_warn("events unchanged");
+      return
+
+  def midifile_out(self, filename=None):      
+    return self._csv_recompile(filename=filename);
+
+  def _csv_decompile(self, filename):
+    s = self._midicsv_cmd(inputfile=filename);
     lines = s.split("\n");
     lines = map(lambda x: self._csv_line_to_obj(x), lines) 
     lines = filter(lambda x: x, lines)
     self.events = lines
     
   def _csv_line_to_obj(self, line):
-    #{{{ line parsing 
+    #{{{ line parsing
     parts = line.split(",")
     parts = map(lambda x: x.replace(" ",""), parts)
+
+    def _str_to_int(s):
+      if re.findall(r'^[0-9]+$', s):
+        return int(s)
+      return s
+    parts = map(lambda x: _str_to_int(x), parts);
     
     if len(parts) < 2:
       return {}
@@ -106,7 +150,7 @@ class RendererAudioMidiFile(RendererAudioMidi):
     #}}}
     return data
 
-  def _csv_recompile(self, events):
+  def _csv_recompile(self, filename=None):
     _output_array = [];
     #{{{ line parsing 
     for event in self.events:
@@ -213,7 +257,29 @@ class RendererAudioMidiFile(RendererAudioMidi):
       self.log_err(str(e));
       self.log_err("Could not write to file {}".format(_output_csv));
       sys.exit(1)
-    file_midi_output = self.filename_new();
-    self._csv_midi_cmd(inputfile=_output_csv, outputfile=file_midi_output)
+    if self._verbose:
+      self.log_info("Made temporary csv file {}".format(_output_csv))
+    file_midi_output = filename or self.filename_new("midi");
+    self._csvmidi_cmd(inputfile=_output_csv, outputfile=file_midi_output)
     return file_midi_output;
 
+  def remove_track(self, track_number):
+    for idx in range(len(self.events)):
+      _track_no = self.events[idx].get("Track")
+      if _track_no == track_number
+        del self.events[idx] 
+      elif _track_no > track_number:
+        self.events[idx]["Track"] = _track_no - 1  
+      else:
+        pass
+
+  def _find_channels(self):
+    _channels = []
+    for event in self.events:
+      if event.get("Channel"):
+        channel = { 
+          "Channel" : event.get("Channel"), 
+          "Track" : event.get("Track")
+        }
+        if channel not in _channels:
+          _channels.append(channel)
