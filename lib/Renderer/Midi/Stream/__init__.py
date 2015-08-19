@@ -3,7 +3,6 @@ import subprocess
 import itertools
 import sys
 #MIDI_JSON_PATH="vendor/midi-json/midi-json"
-from lib.Renderer.Midi.File import RendererMidiFile
 
 
 
@@ -15,11 +14,6 @@ class RendererMidiStream(object):
     self._channels_separate() 
     self.notes_current = []
     self.time_current = 0
-  @classmethod
-  def from_file(cls, filename):
-    midifile = RendererMidiFile(filename)
-    events = midifile.events
-    return cls(events) 
 
   @staticmethod
   def midi_json(filename):
@@ -58,14 +52,15 @@ class RendererMidiStream(object):
   def _channels_separate(self):
     self.tracks = {}
     for event in self.events:
-      track_no = event.get("track_no")
+      track_no = event.get("Track")
       if track_no:
         if track_no in self.tracks.keys():
           self.tracks[track_no].append(event)
         else:
           self.tracks[track_no] = [event]
-    self.channels = map(lambda x: self.tracks[x], sorted(self.tracks.keys())[3:])
-    self.channels = map(lambda x: { "current_event" : {} , "events": itertools.chain(x) }, [ self.channels[0] ])
+    _channels = self._find_channels();
+    self.channels = map(lambda x: self.tracks[x], map(lambda n: n.get("Track"), _channels))
+    self.channels = map(lambda x: { "current_event" : {} , "events": itertools.chain(x) }, self.channels)
 
   def make_event_stream(self):
      total_events = []
@@ -74,12 +69,12 @@ class RendererMidiStream(object):
      channels_left_to_process = len(self.channels)
      while channels_left_to_process: 
        for channel in self.channels:
-         if channel["current_event"].get("type") == "End_track":
+         if channel["current_event"].get("Type") == "End_track":
            channels_left_to_process -= 1;
            continue;
          if not channel["current_event"] and channels_left_to_process:
            channel["current_event"] = channel["events"].next()
-         while int(channel["current_event"].get("abs_time")) <= self.abs_time and channel["current_event"].get("type") != "End_track":
+         while int(channel["current_event"].get("Time")) <= self.abs_time and channel["current_event"].get("Type") != "End_track":
            events_to_process.append(channel["current_event"])
            channel["current_event"] = channel["events"].next();
        total_events.append(events_to_process)
@@ -87,3 +82,14 @@ class RendererMidiStream(object):
        self.abs_time += 1;
      return itertools.chain(total_events)
 
+  def _find_channels(self):
+    _channels = []
+    for event in self.events:
+      if event.get("Channel"):
+        channel = { 
+          "Channel" : event.get("Channel"), 
+          "Track" : event.get("Track")
+        }
+        if channel not in _channels:
+          _channels.append(channel)
+    return _channels

@@ -1,6 +1,7 @@
 #!/usr/bin/python2.7 
 from lib.Renderer.Audio import RendererAudio
 import wave, struct, math
+import random
 import scipy.signal
 import sys
 from lib.Tuning.Midi import TuningMidi
@@ -43,6 +44,8 @@ class RendererAudioSimpleSynth(RendererAudio):
             value += float(amp_width)*scipy.signal.square(f*math.pi*float(i)/float(self.sample_rate))
           elif self.wavetype == "triangle":
             value += float(amp_width)*scipy.signal.triang(f*math.pi*float(i)/float(self.sample_rate))
+          elif self.wavetype == "whitenoise":
+            value += float(amp_width)* random.uniform(-1.0, 1.0)
           else:
             value += float(amp_width)*math.cos(f*math.pi*float(i)/float(self.sample_rate))
   
@@ -66,14 +69,16 @@ class RendererAudioSimpleSynth(RendererAudio):
            if event.get("Type") == "Note_on_c":
              if int(event.get("Velocity")): 
                self._current_notes.append(int(event.get("Note")))
-               print map(lambda n: tuning.midi_note_to_frequency(n), self._current_notes)
+               if self._verbose:
+                 self.log_info("processing frequency data: {}".format(
+                   map(lambda n: tuning.midi_note_to_frequency(n), self._current_notes)
+                 ))
              else:
                try:
                  self._current_notes.remove(int(event.get("Note")))
                except Exception as e:
                  sys.stderr.write(str(e))
            elif event.get("Type") == "Note_off_c":
-             print "in note off"
              self._current_notes.remove(int(event.get("Note")))
          self.sound_write(
            freq=map(lambda n: tuning.midi_note_to_frequency(n), self._current_notes),
@@ -81,7 +86,6 @@ class RendererAudioSimpleSynth(RendererAudio):
            midi_tick=self._current_tick
          )
      except StopIteration:
-       print "in stop iteration"
        pass 
      finally:
        del stream; 

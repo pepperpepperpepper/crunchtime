@@ -1,4 +1,5 @@
 from lib.Renderer.Midi import RendererMidi
+from lib.Renderer.Midi.Stream import RendererMidiStream
 MIDICSV_PATH="midicsv"
 CSVMIDI_PATH="csvmidi"
 import subprocess, sys, os
@@ -16,6 +17,7 @@ class RendererMidiFile(RendererMidi):
     self._csvmidi_path = csvmidi_path
     self._filename = filename or self.filename_new("midi");
     self.events = []
+    self.stream = None
 
   def filename_set(self, filename):
     self._filename = filename
@@ -48,11 +50,13 @@ class RendererMidiFile(RendererMidi):
   def load_events(self, from_file=None, from_events=None):
     if from_events:
       self.events = from_events
+      self.stream = RendererMidiStream(events)
     elif from_file:
       if not os.path.exists(from_file):
         self.log_err("Could not find filename {}".format(from_file));
         sys.exit(1);
-      self._csv_decompile(from_file);
+      self.events = self._csv_decompile(from_file);
+      self.stream = RendererMidiStream(self.events);
     else:
       self.log_warn("must specify filename or events array");
       self.log_warn("events unchanged");
@@ -66,7 +70,7 @@ class RendererMidiFile(RendererMidi):
     lines = s.split("\n");
     lines = map(lambda x: self._csv_line_to_obj(x), lines) 
     lines = filter(lambda x: x, lines)
-    self.events = lines
+    return lines
     
   def _csv_line_to_obj(self, line):
     #{{{ line parsing
@@ -290,13 +294,7 @@ class RendererMidiFile(RendererMidi):
     self.load_events(from_events=new_events)
 
   def _find_channels(self):
-    _channels = []
-    for event in self.events:
-      if event.get("Channel"):
-        channel = { 
-          "Channel" : event.get("Channel"), 
-          "Track" : event.get("Track")
-        }
-        if channel not in _channels:
-          _channels.append(channel)
-    return _channels
+    if self.stream:
+      return self.stream.find_channels();
+    else:
+      return []
