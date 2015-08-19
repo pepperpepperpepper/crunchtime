@@ -13,7 +13,7 @@ s.start()
 notes = Notein(poly=100, scale=1, mul=.5)
 p = Port(notes['velocity'], .001, .5)
 b = Sine(freq=notes['pitch'], mul=p).out()
-rec = Record(osc, filename="./example_synth2.wav", fileformat=0, sampletype=1) #worked
+rec = Record(b, filename="./example_synth2.wav", fileformat=0, sampletype=1) #worked
 clean = Clean_objects(50, rec)
 clean.start()
 #midi notes sent here
