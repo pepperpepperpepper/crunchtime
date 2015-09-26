@@ -34,7 +34,7 @@ def add_to_score(notes,score):
   
 def main():
   score = abjad.Score([]);
-  measures = 20;
+  measures = 2;
   beats = 4 * measures
   
   tempo = abjad.Tempo(abjad.Duration(1, 4), 240)

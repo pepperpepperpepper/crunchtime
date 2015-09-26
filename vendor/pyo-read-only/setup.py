@@ -1,3 +1,4 @@
+#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 """
 Copyright 2009-2015 Olivier Belanger

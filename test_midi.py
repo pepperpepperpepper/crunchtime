@@ -14,12 +14,13 @@ from lib.Tuning.Midi import TuningMidi
 
 #stream1 = RendererMidiStream.from_file("./rendered/equal_temperament.mid")
 file2 = RendererMidiFile()
-file2.load_events(from_file="./rendered/just_intonation.mid")
+#file2.load_events(from_file="./rendered/just_intonation.mid")
+file2.load_events(from_file="../Think_of_Rain.midi");
 stream2 = file2.stream 
 #events1 = stream1.make_event_stream();
 events2 = stream2.make_event_stream();
 #synth1 = RendererAudioSimpleSynth(filename="equal_temperament")
-synth2 = RendererAudioSimpleSynth(filename="just_intonation", wavetype="whitenoise")
+synth2 = RendererAudioSimpleSynth(filename="just_intonation", wavetype="sine")
 #synth1.midi_stream_process(events1, tuning=TuningMidi())
 synth2.midi_stream_process(events2, tuning=TuningMidi(tuning="just_intonation", tonic_midi_note=77))
 
