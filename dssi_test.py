@@ -1,6 +1,8 @@
 #!/usr/bin/python2.7 
-from lib.Renderer.Audio.DSSI import RendererAudioDSSI
+import sys
+sys.path.append('./lib')
+from renderer.audio.dssi import Dssi
 
-r = RendererAudioDSSI();
+r = Dssi();
 r.dssi_list_plugins()
 print r.get_dssi_path("amsynth")
